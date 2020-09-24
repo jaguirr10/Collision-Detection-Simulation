@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+
+  <meta charset="UTF-8">
+  
+ 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title> Collision Detection Simulation</title>
+  
+  
+  
+  
+<style>
+html {
+        background:#ecf0f1;
+    }
+
+    canvas {
+      top: 0;
+      left: 0;
+     background: #44A08D;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to bottom, #093637, #44A08D);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to bottom, #093637, #44A08D); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+    }
+	
+	
+	input{
+	
+
+	
+	  
+	background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+
+margin-left: -600px;
+	
+	}
+	
+	
+	canvas
+	{
+	   margin-bottom: 32px;
+	   
+	   margin-left: 146px;
+	   margin-top: -8px;
+	   
+	 -webkit-box-shadow: 4px 10px 53px -18px rgba(0,0,0,0.75);
+-moz-box-shadow: 4px 10px 53px -18px rgba(0,0,0,0.75);
+box-shadow: 4px 10px 53px -18px rgba(0,0,0,0.75);
+	   
+	   
+	}
+	
+	
+</style>
+
+  
+
+  
+  
+  
+
+</head>
+
+<body>
+  <canvas id="myCanvas" width='1200' height='600'></canvas>
+    <input type='button' id='pause' value='pause' onclick='pause()' >
+
+   Click to add more balls 
+    
+
+  
+  
+      <script>
+	  
+//Run App in chrome
+
+var canvas = document.getElementById("myCanvas");
+var context = canvas.getContext("2d");
+context.font = '20px sans-serif';
+context.textAlign = 'center';
+context.textBaseline = 'middle';
+//canvas.height=window.innerHeight;
+//canvas.width=window.innerwidth;
+function rgb() {
+  var x = Math.ceil(Math.random() * 255).toString(),
+  y = Math.ceil(Math.random() * 255).toString(),
+  z = Math.ceil(Math.random() * 255).toString();
+  return 'rgb(' + x + ',' + y + ',' + z + ')';
+};
+
+function character() {
+  x = Math.ceil(Math.random() * 25) + 65;
+  return String.fromCharCode(x);
+}
+
+var ball = function () {
+  this.r = 10,
+  this.x = Math.random() * 1350,
+  this.y = Math.random() * 550,
+  this.vx = Math.random() * 10 - 5,
+  this.vy = Math.random() * 10 - 5,
+  this.color = rgb();
+  this.word = character();
+};
+
+balls = [];
+for (var i = 0; i < 50; i++)
+balls[i] = new ball();
+
+y = false;
+Name = [];
+
+ball.prototype.draw = function () {
+  context.beginPath();
+  context.fillStyle = this.color;
+  context.arc(this.x, this.y, this.r, 0, 2 * Math.PI, false);
+  context.closePath();
+  context.fill();
+  context.fillStyle = '#ffffff';
+  context.fillText(this.word, this.x, this.y);
+};
+
+ball.prototype.update = function () {
+  for (var i = 0; i < balls.length; i++) {
+    for (var j = 0; j < balls.length; j++) {
+      if (i == j)
+      continue;else
+      if (Math.pow(balls[i].x - balls[j].x, 2) + Math.pow(balls[i].y - balls[j].y, 2) < Math.pow(balls[i].r + balls[j].r, 2) && balls[i].r < 31 && balls[j].r < 31) {
+        balls[i].word += balls[j].word;
+        balls[i].r += balls[j].r;
+        balls.splice(j, 1);
+      }
+    }
+  }
+
+  if (this.vx != 0) {
+    this.x += this.vx;
+    if (this.x + this.r > canvas.width) {
+      this.x = canvas.width - this.r;
+      this.vx *= -1;
+    }
+
+    if (this.x - this.r < 0) {
+      this.x = this.r;
+      this.vx *= -1;
+    }
+  }
+
+  if (Math.abs(this.vy) > 0) {
+    this.y -= this.vy;
+    if (this.y + this.r > canvas.height) {
+      this.y = canvas.height - this.r;
+      this.vy *= -1;
+    }
+
+    if (this.y - this.r < 0) {
+      this.y = this.r;
+      this.vy *= -1;
+    }
+  }
+};
+
+function animate() {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  for (i = 0; i < balls.length; i++) {
+    balls[i].draw();
+    balls[i].update();
+  }
+  if (!y)
+  window.requestAnimationFrame(animate);
+}
+
+function pause() {
+  y = !y;
+  document.getElementById('pause').value = ' play ';
+  if (!y) {
+    document.getElementById('pause').value = 'pause';
+    animate();
+  }
+}
+
+function add_ball(e) {
+  e.preventDefault();
+  var b = new ball();
+  b.x = e.clientX;
+  b.y = e.clientY;
+  balls.push(b);
+}
+
+canvas.addEventListener('click', add_ball, true);
+animate();
+
+    </script>
+
+  
+
+</body>
+
+</html>
+ 
